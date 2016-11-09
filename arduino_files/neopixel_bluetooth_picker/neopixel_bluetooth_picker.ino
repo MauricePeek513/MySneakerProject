@@ -106,7 +106,7 @@ Adafruit_NeoPixel pixel = Adafruit_NeoPixel(60, 6, NEO_GRB + NEO_KHZ800);
 /**************************************************************************/
 void setup(void)
 {
-  while (!Serial);  // required for Flora & Micro
+//  while (!Serial);  // required for Flora & Micro
   delay(500);
 
   Serial.begin(115200);
