@@ -182,7 +182,7 @@
         <item>Accelerometer</item>
         <item>Gyro</item>
         <item>Magnetometer</item>
-        <item>Location</item>
+        <item>FindMyShoes</item>
         <item>Magnetometer</item>
     </string-array>
 
