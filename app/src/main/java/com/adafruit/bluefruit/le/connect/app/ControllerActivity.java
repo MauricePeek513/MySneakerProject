@@ -61,12 +61,12 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
     private final static int kSendDataInterval = 500;   // milliseconds
 
     // Sensor Types
-    private static final int kSensorType_Quaternion = 0;
-    private static final int kSensorType_Accelerometer = 1;
-    private static final int kSensorType_Gyroscope = 2;
-    private static final int kSensorType_Magnetometer = 3;
-    private static final int kSensorType_Location = 4;
-    private static final int kNumSensorTypes = 5;
+    // private static final int kSensorType_Quaternion = 0;
+   //  private static final int kSensorType_Accelerometer = 1;
+    // private static final int kSensorType_Gyroscope = 2;
+    //private static final int kSensorType_Magnetometer = 3;
+    private static final int kSensorType_FindMyShoes = 0;
+     private static final int kNumSensorTypes = 1;
 
     // UI
     private ExpandableHeightExpandableListView mControllerListView;
@@ -334,6 +334,7 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
 
     private void registerEnabledSensorListeners(boolean register) {
 
+/*
         // Accelerometer
         if (register && (mSensorData[kSensorType_Accelerometer].enabled || mSensorData[kSensorType_Quaternion].enabled)) {
             mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -362,10 +363,11 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
         } else {
             mSensorManager.unregisterListener(this, mMagnetometer);
         }
+*/
 
         // Location
         if (mGoogleApiClient.isConnected()) {
-            if (register && mSensorData[kSensorType_Location].enabled) {
+            if (register && mSensorData[kSensorType_FindMyShoes].enabled) {
                 LocationRequest locationRequest = new LocationRequest();
                 locationRequest.setInterval(2000);
                 locationRequest.setFastestInterval(500);
@@ -398,7 +400,7 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
         int groupPosition = (Integer) view.getTag();
 
         // Special check for location data
-        if (groupPosition == kSensorType_Location) {
+        if (groupPosition == kSensorType_FindMyShoes) {
             // Detect if location is enabled or warn user
             final boolean isLocationEnabled = isLocationEnabled();
             if (!isLocationEnabled) {
@@ -429,7 +431,7 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
     @Override
     public final void onSensorChanged(SensorEvent event) {
         int sensorType = event.sensor.getType();
-        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
+        /* if (sensorType == Sensor.TYPE_ACCELEROMETER) {
             mSensorData[kSensorType_Accelerometer].values = event.values;
 
             updateOrientation();            // orientation depends on Accelerometer and Magnetometer
@@ -443,31 +445,31 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
 
             updateOrientation();            // orientation depends on Accelerometer and Magnetometer
             mControllerListAdapter.notifyDataSetChanged();
-        }
+        } */
     }
 
     private void updateOrientation() {
-        float[] lastAccelerometer = mSensorData[kSensorType_Accelerometer].values;
-        float[] lastMagnetometer = mSensorData[kSensorType_Magnetometer].values;
-        if (lastAccelerometer != null && lastMagnetometer != null) {
-            SensorManager.getRotationMatrix(mRotation, null, lastAccelerometer, lastMagnetometer);
-            SensorManager.getOrientation(mRotation, mOrientation);
-
-            final boolean kUse4Components = true;
-            if (kUse4Components) {
-                SensorManager.getQuaternionFromVector(mQuaternion, mOrientation);
-                // Quaternions in Android are stored as [w, x, y, z], so we change it to [x, y, z, w]
-                float w = mQuaternion[0];
-                mQuaternion[0] = mQuaternion[1];
-                mQuaternion[1] = mQuaternion[2];
-                mQuaternion[2] = mQuaternion[3];
-                mQuaternion[3] = w;
-
-                mSensorData[kSensorType_Quaternion].values = mQuaternion;
-            } else {
-                mSensorData[kSensorType_Quaternion].values = mOrientation;
-            }
-        }
+//        float[] lastAccelerometer = mSensorData[kSensorType_Accelerometer].values;
+//        float[] lastMagnetometer = mSensorData[kSensorType_Magnetometer].values;
+//        if (lastAccelerometer != null && lastMagnetometer != null) {
+//            SensorManager.getRotationMatrix(mRotation, null, lastAccelerometer, lastMagnetometer);
+//            SensorManager.getOrientation(mRotation, mOrientation);
+//
+//            final boolean kUse4Components = true;
+//            if (kUse4Components) {
+//                SensorManager.getQuaternionFromVector(mQuaternion, mOrientation);
+//                // Quaternions in Android are stored as [w, x, y, z], so we change it to [x, y, z, w]
+//                float w = mQuaternion[0];
+//                mQuaternion[0] = mQuaternion[1];
+//                mQuaternion[1] = mQuaternion[2];
+//                mQuaternion[2] = mQuaternion[3];
+//                mQuaternion[3] = w;
+//
+//                mSensorData[kSensorType_Quaternion].values = mQuaternion;
+//            } else {
+//                mSensorData[kSensorType_Quaternion].values = mOrientation;
+//            }
+//        }
     }
 
     // region BleManagerListener
@@ -548,7 +550,7 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
 
     private void setLastLocation(Location location) {
         if (location != null) {
-            SensorData sensorData = mSensorData[kSensorType_Location];
+            SensorData sensorData = mSensorData[kSensorType_FindMyShoes];
 
             float[] values = new float[3];
             values[0] = (float) location.getLatitude();
@@ -584,11 +586,11 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
         @Override
         public int getChildrenCount(int groupPosition) {
             switch (groupPosition) {
-                case kSensorType_Quaternion:
-                    return 4;       // Quaternion (x, y, z, w)
-                case kSensorType_Location: {
+                // case kSensorType_Quaternion:
+                    // return 4;       // Quaternion (x, y, z, w)
+                case kSensorType_FindMyShoes: {
                     SensorData sensorData = mSensorData[groupPosition];
-                    return sensorData.values == null ? 1 : 3;
+                    return 1;
                 }
                 default:
                     return 3;
@@ -666,7 +668,7 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
             String valueString = null;
             SensorData sensorData = mSensorData[groupPosition];
             if (sensorData.values != null && sensorData.values.length > childPosition) {
-                if (sensorData.sensorType == kSensorType_Location) {
+                if (sensorData.sensorType == kSensorType_FindMyShoes) {
                     final String[] prefix = {"lat:", "long:", "alt:"};
                     valueString = prefix[childPosition] + " " + sensorData.values[childPosition];
                 } else {
@@ -674,7 +676,7 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
                     valueString = prefix[childPosition] + " " + sensorData.values[childPosition];
                 }
             } else {        // Invalid values
-                if (sensorData.sensorType == kSensorType_Location) {
+                if (sensorData.sensorType == kSensorType_FindMyShoes) {
                     if (sensorData.values == null) {
                         valueString = getString(R.string.controller_location_unknown);
                     }

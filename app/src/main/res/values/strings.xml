@@ -178,12 +178,7 @@
     <string name="controller_magnetometermissing">Your device doesn\'t have magnetic sensor</string>
 
     <string-array name="controller_stream_items">
-        <item>Quaternion</item>
-        <item>Accelerometer</item>
-        <item>Gyro</item>
-        <item>Magnetometer</item>
         <item>FindMyShoes</item>
-        <item>Magnetometer</item>
     </string-array>
 
     <string-array name="controller_interface_items">
