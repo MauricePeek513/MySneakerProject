@@ -118,9 +118,11 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
                 if (position == 0) {
                     Intent intent = new Intent(ControllerActivity.this, ColorPickerActivity.class);
                     startActivityForResult(intent, 0);
-                } else {
-                    Intent intent = new Intent(ControllerActivity.this, PadActivity.class);
+                } else if (position == 1) {
+                    Intent intent = new Intent(ControllerActivity.this, RainbowCycleActivity.class);
                     startActivityForResult(intent, 0);
+                } else {
+                    Log.d(TAG, "Whoops, that button doesn't exist");
                 }
             }
         });

@@ -99,14 +99,6 @@
                 android:value="com.adafruit.bluefruit.le.connect.app.MainActivity" />
         </activity>
         <activity
-            android:name=".app.PadActivity"
-            android:label="@string/title_activity_pad"
-            android:screenOrientation="fullUser">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.adafruit.bluefruit.le.connect.app.MainActivity" />
-        </activity>
-        <activity
             android:name=".app.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".app.MainActivity"
@@ -127,6 +119,14 @@
         <activity
             android:name=".app.ColorPickerActivity"
             android:label="@string/title_activity_color_picker"
+            android:parentActivityName=".app.ControllerActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.adafruit.bluefruit.le.connect.app.ControllerActivity" />
+        </activity>
+        <activity
+            android:name=".app.RainbowCycleActivity"
+            android:label="@string/title_activity_rainbow_cycle"
             android:parentActivityName=".app.ControllerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
