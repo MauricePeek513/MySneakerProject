@@ -43,15 +43,11 @@
     <string name="scan_device_uribeacon_uri">Uri</string>
     <string name="scan_connecting">Connecting…</string>
     <string name="scan_gettingupdateinfo">Waiting for device info…</string>
-    <string name="scan_connectto_dialog_title_format">Choose mode to connect to %s</string>
+    <string name="scan_connectto_dialog_title_format"> %s</string>
     <string name="scan_unexpecteddisconnect">Peripheral disconnected</string>
     <string name="scan_tag_id">Id</string>
     <string name="scan_connectservice_info">Info</string>
-    <string name="scan_connectservice_uart">UART</string>
-    <string name="scan_connectservice_pinio">Pin I/O</string>
-    <string name="scan_connectservice_controller">Controller</string>
-    <string name="scan_connectservice_beacon">Beacon</string>
-    <string name="scan_connectservice_neopixel">Neopixel</string>
+    <string name="scan_connectservice_controller">Color Controller</string>
     <string name="scan_softwareupdate_title">Update available</string>
     <string name="scan_softwareupdate_messageformat">Software version %s is available</string>
     <string name="scan_bootloaderandfirmwareupdate_messageformat">Software version %1$s and Bootloader version %2$s are available. This is a two-step process: bootloader will be updated first and firmware the next time you connect to the device</string>

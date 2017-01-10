@@ -93,11 +93,7 @@ public class MainActivity extends AppCompatActivity implements BleManager.BleMan
     // Components
     private final static int kComponentsNameIds[] = {
             R.string.scan_connectservice_info,
-            R.string.scan_connectservice_uart,
-            R.string.scan_connectservice_pinio,
             R.string.scan_connectservice_controller,
-            R.string.scan_connectservice_beacon,
-            R.string.scan_connectservice_neopixel,
     };
 
     // Activity request codes (used for onActivityResult)
@@ -623,24 +619,8 @@ public class MainActivity extends AppCompatActivity implements BleManager.BleMan
                                 mComponentToStartWhenConnected = InfoActivity.class;
                                 break;
                             }
-                            case R.string.scan_connectservice_uart: {           // Uart
-                                mComponentToStartWhenConnected = UartActivity.class;
-                                break;
-                            }
-                            case R.string.scan_connectservice_pinio: {        // PinIO
-                                mComponentToStartWhenConnected = PinIOActivity.class;
-                                break;
-                            }
                             case R.string.scan_connectservice_controller: {    // Controller
                                 mComponentToStartWhenConnected = ControllerActivity.class;
-                                break;
-                            }
-                            case R.string.scan_connectservice_beacon: {        // Beacon
-                                mComponentToStartWhenConnected = BeaconActivity.class;
-                                break;
-                            }
-                            case R.string.scan_connectservice_neopixel: {       // Neopixel
-                                mComponentToStartWhenConnected = NeopixelActivity.class;
                                 break;
                             }
                         }
