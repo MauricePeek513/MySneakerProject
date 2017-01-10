@@ -24,7 +24,6 @@
 #include "Adafruit_BluefruitLE_UART.h"
 
 #include "BluefruitConfig.h"
-
 #include <Adafruit_NeoPixel.h>
 
 /*=========================================================================
@@ -53,16 +52,15 @@
                               since the factory reset will clear all of the
                               bonding data stored on the chip, meaning the
                               central device won't be able to reconnect.
-    PIN                       Which pin on the Arduino is connected to the NeoPixels?
-    NUMPIXELS                 How many NeoPixels are attached to the Arduino?
+    MINIMUM_FIRMWARE_VERSION  Minimum firmware version to have some new features
+    MODE_LED_BEHAVIOUR        LED activity, valid options are
+                              "DISABLE" or "MODE" or "BLEUART" or
+                              "HWUART"  or "SPI"  or "MANUAL"
     -----------------------------------------------------------------------*/
-    #define FACTORYRESET_ENABLE     1
-
-    #define PIN                     6
-    #define NUMPIXELS               60
+    #define FACTORYRESET_ENABLE         1
+    #define MINIMUM_FIRMWARE_VERSION    "0.6.6"
+    #define MODE_LED_BEHAVIOUR          "MODE"
 /*=========================================================================*/
-
-Adafruit_NeoPixel pixel = Adafruit_NeoPixel(NUMPIXELS, PIN);
 
 // Create the bluefruit object, either software serial...uncomment these lines
 /*
@@ -98,76 +96,11 @@ void printHex(const uint8_t * data, const uint32_t numBytes);
 // the packet buffer
 extern uint8_t packetbuffer[];
 
+// Adafruit_NeoPixel pixel = Adafruit_NeoPixel(60, 6, NEO_GRB + NEO_KHZ800);
 
-/**************************************************************************/
-/*!
-    @brief  Sets up the HW an the BLE module (this function is called
-            automatically on startup)
-*/
-/**************************************************************************/
-//void setup(void)
-//{
-//  while (!Serial);  // required for Flora & Micro
-//  delay(500);
-//
-//  // turn off neopixel
-//  pixel.begin(); // This initializes the NeoPixel library.
-//  for(uint8_t i=0; i<NUMPIXELS; i++) {
-//    pixel.setPixelColor(i, pixel.Color(0,0,0)); // off
-//  }
-//  pixel.show();
-//
-//  Serial.begin(115200);
-//  Serial.println(F("Adafruit Bluefruit Neopixel Color Picker Example"));
-//  Serial.println(F("------------------------------------------------"));
-//
-//  /* Initialise the module */
-//  Serial.print(F("Initialising the Bluefruit LE module: "));
-//
-//  if ( !ble.begin(VERBOSE_MODE) )
-//  {
-//    error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
-//  }
-//  Serial.println( F("OK!") );
-//
-//  if ( FACTORYRESET_ENABLE )
-//  {
-//    /* Perform a factory reset to make sure everything is in a known state */
-//    Serial.println(F("Performing a factory reset: "));
-//    if ( ! ble.factoryReset() ){
-//      error(F("Couldn't factory reset"));
-//    }
-//  }
-//
-//  /* Disable command echo from Bluefruit */
-//  ble.echo(false);
-//
-//  Serial.println("Requesting Bluefruit info:");
-//  /* Print Bluefruit information */
-//  ble.info();
-//
-//  Serial.println(F("Please use Adafruit Bluefruit LE app to connect in Controller mode"));
-//  Serial.println(F("Then activate/use the sensors, color picker, game controller, etc!"));
-//  Serial.println();
-//
-//  ble.verbose(false);  // debug info is a little annoying after this point!
-//
-//  /* Wait for connection */
-//  while (! ble.isConnected()) {
-//      delay(500);
-//  }
-//
-//  Serial.println(F("***********************"));
-//
-//  // Set Bluefruit to DATA mode
-//  Serial.println( F("Switching to DATA mode!") );
-//  ble.setMode(BLUEFRUIT_MODE_DATA);
-//
-//  Serial.println(F("***********************"));
-//
-//}
-
-#include <Adafruit_NeoPixel.h>
+/**************************
+ * START special class for color patterns
+ */
 
 // Pattern types supported:
 enum  pattern { NONE, RAINBOW_CYCLE, THEATER_CHASE, COLOR_WIPE, SCANNER, FADE };
@@ -458,40 +391,15 @@ class NeoPatterns : public Adafruit_NeoPixel
     }
 };
 
+ 
+/**************************
+ * END special class for color patterns
+ */
+
 void StickComplete();
 
-// Define some NeoPatterns for the two rings and the stick
-//  as well as some completion routines
-NeoPatterns Stick(120, 6, NEO_GRB + NEO_KHZ800, &StickComplete);
+NeoPatterns Stick(60, 6, NEO_GRB + NEO_KHZ800, &StickComplete);
 
-// Initialize everything and prepare to start
-void setup()
-{
-  Serial.begin(115200);
-    
-    // Initialize all the pixelStrips
-    Stick.begin();
-
-    Stick.setBrightness(15);
-    
-    // Kick off a pattern
-    Stick.RainbowCycle(1);
-    //Stick.ColorWipe(Stick.Color(255,0,0), 10);
-    //Stick.Scanner(Stick.Color(255,0,0), 1);
-    //Stick.TheaterChase(Stick.Color(255,0,0),Stick.Color(0,255,0), 100);
-    //Stick.Fade(Stick.Color(255,0,0), Stick.Color(0,255,0), 40, 40);
-}
-
-// Main loop
-void loop()
-{    
-      // And update tbe stick
-      Stick.Update();
-}
-
-//------------------------------------------------------------
-//Completion Routines - get called on completion of a pattern
-//------------------------------------------------------------
 // Stick Completion Callback
 void StickComplete()
 {
@@ -499,46 +407,144 @@ void StickComplete()
     Stick.Color1 = Stick.Wheel(random(255));
 }
 
+pattern CurrentPattern = NONE;
+
+/**************************************************************************/
+/*!
+    @brief  Sets up the HW an the BLE module (this function is called
+            automatically on startup)
+*/
+/**************************************************************************/
+void setup(void)
+{
+  //while (!Serial);  // required for Flora & Micro
+  delay(500);
+
+  Serial.begin(115200);
+  Serial.println(F("Adafruit Bluefruit App Controller Example"));
+  Serial.println(F("-----------------------------------------"));
+
+  /* Initialise the module */
+  Serial.print(F("Initialising the Bluefruit LE module: "));
+
+  if ( !ble.begin(VERBOSE_MODE) )
+  {
+    error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
+  }
+  Serial.println( F("OK!") );
+
+  if ( FACTORYRESET_ENABLE )
+  {
+    /* Perform a factory reset to make sure everything is in a known state */
+    Serial.println(F("Performing a factory reset: "));
+    if ( ! ble.factoryReset() ){
+      error(F("Couldn't factory reset"));
+    }
+  }
+
+
+  /* Disable command echo from Bluefruit */
+  ble.echo(false);
+
+  Serial.println("Requesting Bluefruit info:");
+  /* Print Bluefruit information */
+  ble.info();
+
+  Serial.println(F("Please use Adafruit Bluefruit LE app to connect in Controller mode"));
+  Serial.println(F("Then activate/use the sensors, color picker, game controller, etc!"));
+  Serial.println();
+
+  ble.verbose(false);  // debug info is a little annoying after this point!
+
+  /* Wait for connection */
+  while (! ble.isConnected()) {
+      delay(500);
+  }
+
+  Serial.println(F("******************************"));
+//  pixel.begin();
+//  pixel.setBrightness(15);
+//  pixel.show();
+
+  // LED Activity command is only supported from 0.6.6
+  if ( ble.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION) )
+  {
+    // Change Mode LED Activity
+    Serial.println(F("Change LED activity to " MODE_LED_BEHAVIOUR));
+    ble.sendCommandCheckOK("AT+HWModeLED=" MODE_LED_BEHAVIOUR);
+  }
+
+  // Set Bluefruit to DATA mode
+  Serial.println( F("Switching to DATA mode!") );
+  ble.setMode(BLUEFRUIT_MODE_DATA);
+
+  Serial.println(F("******************************"));
+
+  Stick.begin();
+  Stick.setBrightness(15);
+  Stick.show();
+
+}
 
 /**************************************************************************/
 /*!
     @brief  Constantly poll for new command or response data
 */
 /**************************************************************************/
-//void loop(void)
-//{
-//  /* Wait for new data to arrive */
-//  uint8_t len = readPacket(&ble, BLE_READPACKET_TIMEOUT);
-//  if (len == 0) return;
-//
-//  /* Got a packet! */
-//  // printHex(packetbuffer, len);
-//
-//  // Color
-//  if (packetbuffer[1] == 'C') {
-//    uint8_t red = packetbuffer[2];
-//    uint8_t green = packetbuffer[3];
-//    uint8_t blue = packetbuffer[4];
-//    Serial.print ("RGB #");
-//    if (red < 0x10) Serial.print("0");
-//    Serial.print(red, HEX);
-//    if (green < 0x10) Serial.print("0");
-//    Serial.print(green, HEX);
-//    if (blue < 0x10) Serial.print("0");
-//    Serial.println(blue, HEX);
-//
-//    
-//
-//    for (uint8_t x=0; x<3; x++) {
-//        for(uint8_t i=0; i<NUMPIXELS; i++) {
-//           red = red + 2;
-//           green = green + 2;
-//           blue = blue + 2;
-//           pixel.setPixelColor(i, pixel.Color(red,green,blue ));
-//        }
-//        pixel.show(); // This sends the updated pixel color to the hardware.
-//        delay(100);
-//    }
-//  }
-//
-//}
+void loop(void)
+{
+  /* Wait for new data to arrive  (time out set in BluefruitConfig.h) */
+  uint8_t len = readPacket(&ble, BLE_READPACKET_TIMEOUT);
+
+//  pixel.show();
+  if (CurrentPattern == NONE) {
+    Stick.show();
+  } else {
+    Stick.Update();
+  }
+ 
+  if (len == 0) return;
+
+  /* Got a packet! */
+  // printHex(packetbuffer, len);
+
+  // Color (color_picker)
+  if (packetbuffer[1] == 'C') {
+    CurrentPattern = NONE;
+    uint8_t red = packetbuffer[2];
+    uint8_t green = packetbuffer[3];
+    uint8_t blue = packetbuffer[4];
+    Serial.print ("RGB #");
+    if (red < 0x10) Serial.print("0");
+    Serial.print(red, HEX);
+    if (green < 0x10) Serial.print("0");
+    Serial.print(green, HEX);
+    if (blue < 0x10) Serial.print("0");
+    Serial.println(blue, HEX);
+    for (uint8_t i=0; i<60; i++){
+      Stick.setPixelColor(i, Stick.Color(red, green, blue));
+    }
+  }
+  
+  // GPS Location
+  if (packetbuffer[1] == 'L') {
+    float lat, lon, alt;
+    lat = parsefloat(packetbuffer+2);
+    lon = parsefloat(packetbuffer+6);
+    alt = parsefloat(packetbuffer+10);
+    Serial.print("GPS Location\t");
+    Serial.print("Lat: "); Serial.print(lat, 4); // 4 digits of precision!
+    Serial.print('\t');
+    Serial.print("Lon: "); Serial.print(lon, 4); // 4 digits of precision!
+    Serial.print('\t');
+    Serial.print(alt, 4); Serial.println(" meters");
+  }
+
+  // Rainbow Cycle
+  if (packetbuffer[1] == 'R') {
+    CurrentPattern = RAINBOW_CYCLE;
+    Stick.RainbowCycle(1);
+    Serial.print("Rain\t");
+    
+  }
+}
