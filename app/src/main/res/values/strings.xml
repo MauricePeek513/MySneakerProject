@@ -180,6 +180,7 @@
     <string-array name="controller_interface_items">
         <item>Color Picker</item>
         <item>Rainbow Cycle</item>
+        <item>Scanner</item>
     </string-array>
 
     <!-- Color Picker -->
@@ -194,6 +195,12 @@
     <string name="rainbow_cycle_help_title">Rainbow Cycle Help</string>
     <string name="rainbow_cycle_about_title">Rainbow Cycle About</string>
     <string name="rainbow_cycle_send">START</string>
+
+    <!-- Scanner -->
+    <string name="title_activity_scanner">Scanner</string>
+    <string name="scanner_help_title">Scanner Help</string>
+    <string name="scanner_about_title">Scanner About</string>
+    <string name="scanner_send">START</string>
 
     <!-- Beacon -->
     <string name="title_activity_beacon">Beacons</string>

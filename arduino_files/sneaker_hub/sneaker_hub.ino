@@ -60,6 +60,11 @@
     #define FACTORYRESET_ENABLE         1
     #define MINIMUM_FIRMWARE_VERSION    "0.6.6"
     #define MODE_LED_BEHAVIOUR          "MODE"
+
+    
+    #define NUMBER_OF_PIXELS            60
+    #define STARTING_LEFT_SHOE          1
+    #define STARTING_RIGHT_SHOE         61
 /*=========================================================================*/
 
 // Create the bluefruit object, either software serial...uncomment these lines
@@ -398,7 +403,7 @@ class NeoPatterns : public Adafruit_NeoPixel
 
 void StickComplete();
 
-NeoPatterns Stick(60, 6, NEO_GRB + NEO_KHZ800, &StickComplete);
+NeoPatterns Stick(NUMBER_OF_PIXELS, 6, NEO_GRB + NEO_KHZ800, &StickComplete);
 
 // Stick Completion Callback
 void StickComplete()
@@ -521,7 +526,7 @@ void loop(void)
     Serial.print(green, HEX);
     if (blue < 0x10) Serial.print("0");
     Serial.println(blue, HEX);
-    for (uint8_t i=0; i<60; i++){
+    for (uint8_t i=0; i<NUMBER_OF_PIXELS; i++){
       Stick.setPixelColor(i, Stick.Color(red, green, blue));
     }
   }

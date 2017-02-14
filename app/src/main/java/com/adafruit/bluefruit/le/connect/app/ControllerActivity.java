@@ -121,6 +121,9 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
                 } else if (position == 1) {
                     Intent intent = new Intent(ControllerActivity.this, RainbowCycleActivity.class);
                     startActivityForResult(intent, 0);
+                } else if (position == 2) {
+                    Intent intent = new Intent(ControllerActivity.this, ScannerActivity.class);
+                    startActivityForResult(intent, 0);
                 } else {
                     Log.d(TAG, "Whoops, that button doesn't exist");
                 }
@@ -592,7 +595,7 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
                     // return 4;       // Quaternion (x, y, z, w)
                 case kSensorType_FindMyShoes: {
                     SensorData sensorData = mSensorData[groupPosition];
-                    return 1;
+                    return sensorData.values == null ? 1 : 3;
                 }
                 default:
                     return 3;
