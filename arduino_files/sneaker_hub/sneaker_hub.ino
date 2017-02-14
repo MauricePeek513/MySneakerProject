@@ -63,8 +63,7 @@
 
     
     #define NUMBER_OF_PIXELS            60
-    #define STARTING_LEFT_SHOE          1
-    #define STARTING_RIGHT_SHOE         61
+    #define ANALOG_IN_PIN               A9
 /*=========================================================================*/
 
 // Create the bluefruit object, either software serial...uncomment these lines
@@ -120,6 +119,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     // Member Variables:  
     pattern  ActivePattern;  // which pattern is running
     direction Direction;     // direction to run the pattern
+    bool pressureActive;
     
     unsigned long Interval;   // milliseconds between updates
     unsigned long lastUpdate; // last update of position
@@ -135,6 +135,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     :Adafruit_NeoPixel(pixels, pin, type)
     {
         OnComplete = callback;
+        pressureActive = true;
     }
     
     // Update the pattern
@@ -426,6 +427,7 @@ void setup(void)
   delay(500);
 
   Serial.begin(115200);
+  pinMode(9, INPUT_PULLUP);
   Serial.println(F("Adafruit Bluefruit App Controller Example"));
   Serial.println(F("-----------------------------------------"));
 
@@ -491,6 +493,8 @@ void setup(void)
 
 }
 
+int sensorValue = 0;
+
 /**************************************************************************/
 /*!
     @brief  Constantly poll for new command or response data
@@ -501,17 +505,32 @@ void loop(void)
   /* Wait for new data to arrive  (time out set in BluefruitConfig.h) */
   uint8_t len = readPacket(&ble, BLE_READPACKET_TIMEOUT);
 
-//  pixel.show();
   if (CurrentPattern == NONE) {
     Stick.show();
   } else {
-    Stick.Update();
+    if (Stick.pressureActive == true) {
+      sensorValue = analogRead(ANALOG_IN_PIN);
+//      Serial.print("sensor = ");
+//      Serial.println(sensorValue);
+      if ( sensorValue < 100 ) {
+        Serial.println("LEDs triggered");
+        Stick.Update();
+      }
+    } else {
+      Stick.Update();
+    }
   }
  
   if (len == 0) return;
 
   /* Got a packet! */
   // printHex(packetbuffer, len);
+
+  // Toggle pressure sensor
+  if (packetbuffer[1] == 'P') {
+    Stick.pressureActive = ~Stick.pressureActive;
+    Serial.print("PressureActive toggled");
+  }
 
   // Color (color_picker)
   if (packetbuffer[1] == 'C') {

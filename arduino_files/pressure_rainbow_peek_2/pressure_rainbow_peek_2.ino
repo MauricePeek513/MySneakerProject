@@ -2,7 +2,7 @@
 
 const int analogInPin = A9; // Analog input pin that the potentiometer is attached to
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(120, 6, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, 6, NEO_GRB + NEO_KHZ800);
 int sensorValue = 0;
 // value read from the pot
 
