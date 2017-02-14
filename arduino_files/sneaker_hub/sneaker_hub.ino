@@ -404,7 +404,7 @@ NeoPatterns Stick(60, 6, NEO_GRB + NEO_KHZ800, &StickComplete);
 void StickComplete()
 {
     // Random color change for next scan
-    Stick.Color1 = Stick.Wheel(random(255));
+    //Stick.Color1 = Stick.Wheel(random(255));
 }
 
 pattern CurrentPattern = NONE;
@@ -544,7 +544,15 @@ void loop(void)
   if (packetbuffer[1] == 'R') {
     CurrentPattern = RAINBOW_CYCLE;
     Stick.RainbowCycle(1);
-    Serial.print("Rain\t");
+    Serial.print("Rain\n");
     
   }
+
+  // Scanner
+  if (packetbuffer[1] == 'S') {
+    CurrentPattern = SCANNER;
+    Stick.Scanner(Stick.Color(0xFF,0,0), 1);
+    Serial.print("Scanner\n");
+    
+  }  
 }
