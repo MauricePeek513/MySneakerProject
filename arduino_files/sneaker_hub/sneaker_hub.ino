@@ -528,8 +528,12 @@ void loop(void)
 
   // Toggle pressure sensor
   if (packetbuffer[1] == 'P') {
-    Stick.pressureActive = ~Stick.pressureActive;
-    Serial.print("PressureActive toggled");
+    Stick.pressureActive = true;
+    Serial.println("PressureActive Activated");
+  }
+  if (packetbuffer[1] == 'Q') {
+    Stick.pressureActive = false;
+    Serial.println("PressureActive Deactivated");
   }
 
   // Color (color_picker)

@@ -124,6 +124,9 @@ public class ControllerActivity extends UartInterfaceActivity implements SensorE
                 } else if (position == 2) {
                     Intent intent = new Intent(ControllerActivity.this, ScannerActivity.class);
                     startActivityForResult(intent, 0);
+                } else if (position == 3) {
+                    Intent intent = new Intent(ControllerActivity.this, PressureActivity.class);
+                    startActivityForResult(intent, 0);
                 } else {
                     Log.d(TAG, "Whoops, that button doesn't exist");
                 }

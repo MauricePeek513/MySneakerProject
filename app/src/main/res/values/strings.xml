@@ -181,6 +181,7 @@
         <item>Color Picker</item>
         <item>Rainbow Cycle</item>
         <item>Scanner</item>
+        <item>Pressure</item>
     </string-array>
 
     <!-- Color Picker -->
@@ -201,6 +202,13 @@
     <string name="scanner_help_title">Scanner Help</string>
     <string name="scanner_about_title">Scanner About</string>
     <string name="scanner_send">START</string>
+
+    <!-- Pressure -->
+    <string name="title_activity_pressure">Pressure</string>
+    <string name="pressure_help_title">Pressure Help</string>
+    <string name="pressure_about_title">Pressure About</string>
+    <string name="pressure_send_start">START</string>
+    <string name="pressure_send_stop">STOP</string>
 
     <!-- Beacon -->
     <string name="title_activity_beacon">Beacons</string>
