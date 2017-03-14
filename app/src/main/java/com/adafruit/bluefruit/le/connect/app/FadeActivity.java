@@ -18,9 +18,9 @@ import com.larswerkman.holocolorpicker.ValueBar;
 
 import java.nio.ByteBuffer;
 
-public class ScannerActivity extends UartInterfaceActivity  implements ColorPicker.OnColorChangedListener {
+public class FadeActivity extends UartInterfaceActivity  implements ColorPicker.OnColorChangedListener {
     // Log
-    private final static String TAG = ScannerActivity.class.getSimpleName();
+    private final static String TAG = FadeActivity.class.getSimpleName();
 
     // Constants
     private final static boolean kPersistValues = true;
@@ -34,7 +34,9 @@ public class ScannerActivity extends UartInterfaceActivity  implements ColorPick
     private View mRgbColorView;
     private TextView mRgbTextView;
 
-    private int mSelectedColor;
+    private int mCurrentColor;
+    private int mSelectedColor1;
+    private int mSelectedColor2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +60,19 @@ public class ScannerActivity extends UartInterfaceActivity  implements ColorPick
 
         if (kPersistValues) {
             SharedPreferences preferences = getSharedPreferences(kPreferences, Context.MODE_PRIVATE);
-            mSelectedColor = preferences.getInt(kPreferences_color, kFirstTimeColor);
+            mSelectedColor1 = preferences.getInt(kPreferences_color, kFirstTimeColor);
+            mSelectedColor2 = preferences.getInt(kPreferences_color, kFirstTimeColor);
         } else {
-            mSelectedColor = kFirstTimeColor;
+            mSelectedColor1 = kFirstTimeColor;
+            mSelectedColor2 = kFirstTimeColor;
         }
 
-        mColorPicker.setOldCenterColor(mSelectedColor);
-        mColorPicker.setColor(mSelectedColor);
-        onColorChanged(mSelectedColor);
+        mColorPicker.setOldCenterColor(mSelectedColor1);
+        mColorPicker.setOldCenterColor(mSelectedColor2);
+        mColorPicker.setColor(mSelectedColor1);
+        mColorPicker.setColor(mSelectedColor2);
+        onColorChanged(mSelectedColor1);
+        onColorChanged(mSelectedColor2);
 
         // Start services
         onServicesDiscovered();
@@ -77,7 +84,8 @@ public class ScannerActivity extends UartInterfaceActivity  implements ColorPick
         if (kPersistValues) {
             SharedPreferences settings = getSharedPreferences(kPreferences, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = settings.edit();
-            editor.putInt(kPreferences_color, mSelectedColor);
+            editor.putInt(kPreferences_color, mSelectedColor1);
+            editor.putInt(kPreferences_color, mSelectedColor2);
             editor.apply();
         }
 
@@ -162,7 +170,7 @@ public class ScannerActivity extends UartInterfaceActivity  implements ColorPick
     @Override
     public void onColorChanged(int color) {
         // Save selected color
-        mSelectedColor = color;
+        mCurrentColor = color;
 
         // Update UI
         mRgbColorView.setBackgroundColor(color);
@@ -175,21 +183,37 @@ public class ScannerActivity extends UartInterfaceActivity  implements ColorPick
 
     }
 
+    public void onClickSetColor1(View view) {
+        // Set the old color
+        mColorPicker.setOldCenterColor(mSelectedColor1);
+    }
+
+    public void onClickSetColor2(View view) {
+        // Set the old color
+        mColorPicker.setOldCenterColor(mSelectedColor2);
+    }
 
     public void onClickSend(View view) {
-        // Set the old color
-        mColorPicker.setOldCenterColor(mSelectedColor);
-
-        // Send selected color !Crgb
-        byte r = (byte) ((mSelectedColor >> 16) & 0xFF);
-        byte g = (byte) ((mSelectedColor >> 8) & 0xFF);
-        byte b = (byte) ((mSelectedColor >> 0) & 0xFF);
 
         ByteBuffer buffer = ByteBuffer.allocate(2 + 3 * 1).order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
         // prefix
-        String prefix = "!S";
+        String prefix = "!F";
         buffer.put(prefix.getBytes());
+
+        // Send selected color !Crgb
+        byte r = (byte) ((mSelectedColor1 >> 16) & 0xFF);
+        byte g = (byte) ((mSelectedColor1 >> 8) & 0xFF);
+        byte b = (byte) ((mSelectedColor1 >> 0) & 0xFF);
+
+        // values
+        buffer.put(r);
+        buffer.put(g);
+        buffer.put(b);
+
+        r = (byte) ((mSelectedColor2 >> 16) & 0xFF);
+        g = (byte) ((mSelectedColor2 >> 8) & 0xFF);
+        b = (byte) ((mSelectedColor2 >> 0) & 0xFF);
 
         // values
         buffer.put(r);

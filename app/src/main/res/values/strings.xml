@@ -182,6 +182,7 @@
         <item>Rainbow Cycle</item>
         <item>Scanner</item>
         <item>Pressure</item>
+        <item>Fade</item>
     </string-array>
 
     <!-- Color Picker -->
@@ -209,6 +210,14 @@
     <string name="pressure_about_title">Pressure About</string>
     <string name="pressure_send_start">START</string>
     <string name="pressure_send_stop">STOP</string>
+
+    <!-- Fade -->
+    <string name="title_activity_fade">Fade</string>
+    <string name="fade_help_title">Fade Help</string>
+    <string name="fade_about_title">Fade About</string>
+    <string name="fade_set_color1">Set Color 1</string>
+    <string name="fade_set_color2">Set Color 2</string>
+    <string name="fade_send">START</string>
 
     <!-- Beacon -->
     <string name="title_activity_beacon">Beacons</string>

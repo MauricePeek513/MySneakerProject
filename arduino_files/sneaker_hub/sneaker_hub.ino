@@ -61,7 +61,7 @@
     #define MINIMUM_FIRMWARE_VERSION    "0.6.6"
     #define MODE_LED_BEHAVIOUR          "MODE"
 
-    
+    #define START_PIXEL                 0
     #define NUMBER_OF_PIXELS            60
     #define ANALOG_IN_PIN               A9
 /*=========================================================================*/
@@ -135,7 +135,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     :Adafruit_NeoPixel(pixels, pin, type)
     {
         OnComplete = callback;
-        pressureActive = true;
+        pressureActive = false;
     }
     
     // Update the pattern
@@ -224,7 +224,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     // Update the Rainbow Cycle Pattern
     void RainbowCycleUpdate()
     {
-        for(int i=0; i< numPixels(); i++)
+        for(int i=START_PIXEL; i< numPixels(); i++)
         {
             setPixelColor(i, Wheel(((i * 256 / numPixels()) + Index) & 255));
         }
@@ -247,7 +247,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     // Update the Theater Chase Pattern
     void TheaterChaseUpdate()
     {
-        for(int i=0; i< numPixels(); i++)
+        for(int i=START_PIXEL; i< numPixels(); i++)
         {
             if ((i + Index) % 3 == 0)
             {
@@ -294,7 +294,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     // Update the Scanner Pattern
     void ScannerUpdate()
     { 
-        for (int i = 0; i < numPixels(); i++)
+        for (int i = START_PIXEL; i < numPixels(); i++)
         {
             if (i == Index)  // Scan Pixel to the right
             {
@@ -350,7 +350,7 @@ class NeoPatterns : public Adafruit_NeoPixel
     // Set all pixels to a color (synchronously)
     void ColorSet(uint32_t color)
     {
-        for (int i = 0; i < numPixels(); i++)
+        for (int i = START_PIXEL; i < numPixels(); i++)
         {
             setPixelColor(i, color);
         }
@@ -549,7 +549,7 @@ void loop(void)
     Serial.print(green, HEX);
     if (blue < 0x10) Serial.print("0");
     Serial.println(blue, HEX);
-    for (uint8_t i=0; i<NUMBER_OF_PIXELS; i++){
+    for (uint8_t i=START_PIXEL; i<NUMBER_OF_PIXELS; i++){
       Stick.setPixelColor(i, Stick.Color(red, green, blue));
     }
   }
@@ -579,7 +579,17 @@ void loop(void)
   // Scanner
   if (packetbuffer[1] == 'S') {
     CurrentPattern = SCANNER;
-    Stick.Scanner(Stick.Color(0xFF,0,0), 1);
+    uint8_t red = packetbuffer[2];
+    uint8_t green = packetbuffer[3];
+    uint8_t blue = packetbuffer[4];
+    Serial.print ("RGB #");
+    if (red < 0x10) Serial.print("0");
+    Serial.print(red, HEX);
+    if (green < 0x10) Serial.print("0");
+    Serial.print(green, HEX);
+    if (blue < 0x10) Serial.print("0");
+    Serial.println(blue, HEX);
+    Stick.Scanner(Stick.Color(red,green,blue), 1);
     Serial.print("Scanner\n");
     
   }  
