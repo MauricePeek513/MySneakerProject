@@ -149,6 +149,14 @@
                 android:value="com.adafruit.bluefruit.le.connect.app.ControllerActivity" />
         </activity>
         <activity
+            android:name=".app.FadeActivity"
+            android:label="@string/title_activity_fade"
+            android:parentActivityName=".app.ControllerActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.adafruit.bluefruit.le.connect.app.ControllerActivity" />
+        </activity>
+        <activity
             android:name=".app.settings.MqttUartSettingsActivity"
             android:label="@string/title_activity_mqtt"
             android:parentActivityName=".app.UartActivity">

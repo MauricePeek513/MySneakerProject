@@ -24,7 +24,7 @@ public class FadeActivity extends UartInterfaceActivity  implements ColorPicker.
 
     // Constants
     private final static boolean kPersistValues = true;
-    private final static String kPreferences = "ScannerActivity_prefs";
+    private final static String kPreferences = "FadeActivity_prefs";
     private final static String kPreferences_color = "color";
 
     private final static int kFirstTimeColor = 0x0000ff;
@@ -41,7 +41,7 @@ public class FadeActivity extends UartInterfaceActivity  implements ColorPicker.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scanner);
+        setContentView(R.layout.activity_fade);
 
         mBleManager = BleManager.getInstance(this);
 
@@ -118,8 +118,8 @@ public class FadeActivity extends UartInterfaceActivity  implements ColorPicker.
     private void startHelp() {
         // Launch help activity
         Intent intent = new Intent(this, CommonHelpActivity.class);
-        intent.putExtra("title_scanner", getString(R.string.colorpicker_help_title));
-        intent.putExtra("help_scanner", "colorpicker_help.html");
+        intent.putExtra("title_scanner", getString(R.string.fade_help_title));
+        intent.putExtra("help_scanner", "fade_help.html");
         startActivity(intent);
     }
 
@@ -185,17 +185,19 @@ public class FadeActivity extends UartInterfaceActivity  implements ColorPicker.
 
     public void onClickSetColor1(View view) {
         // Set the old color
-        mColorPicker.setOldCenterColor(mSelectedColor1);
+        //mColorPicker.setOldCenterColor(mSelectedColor1);
+        mSelectedColor1 = mCurrentColor;
     }
 
     public void onClickSetColor2(View view) {
         // Set the old color
-        mColorPicker.setOldCenterColor(mSelectedColor2);
+        //mColorPicker.setOldCenterColor(mSelectedColor2);
+        mSelectedColor2 = mCurrentColor;
     }
 
     public void onClickSend(View view) {
 
-        ByteBuffer buffer = ByteBuffer.allocate(2 + 3 * 1).order(java.nio.ByteOrder.LITTLE_ENDIAN);
+        ByteBuffer buffer = ByteBuffer.allocate(2 + 3 * 2).order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
         // prefix
         String prefix = "!F";
@@ -221,6 +223,7 @@ public class FadeActivity extends UartInterfaceActivity  implements ColorPicker.
         buffer.put(b);
 
         byte[] result = buffer.array();
+        // Send "!FRGBRGB"
         sendDataWithCRC(result);
     }
 }

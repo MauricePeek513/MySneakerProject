@@ -333,7 +333,14 @@ class NeoPatterns : public Adafruit_NeoPixel
         uint8_t red = ((Red(Color1) * (TotalSteps - Index)) + (Red(Color2) * Index)) / TotalSteps;
         uint8_t green = ((Green(Color1) * (TotalSteps - Index)) + (Green(Color2) * Index)) / TotalSteps;
         uint8_t blue = ((Blue(Color1) * (TotalSteps - Index)) + (Blue(Color2) * Index)) / TotalSteps;
-        
+
+        if (Index >= TotalSteps && Direction == FORWARD) {
+          Index = TotalSteps;
+          Direction = REVERSE;
+        } else if (Index <= 0 && Direction == REVERSE) {
+          Index = 0;
+          Direction = FORWARD;
+        }
         ColorSet(Color(red, green, blue));
         show();
         Increment();
@@ -573,7 +580,27 @@ void loop(void)
     CurrentPattern = RAINBOW_CYCLE;
     Stick.RainbowCycle(1);
     Serial.print("Rain\n");
-    
+  }
+
+  // Fade
+  if (packetbuffer[1] == 'F') {
+    CurrentPattern = FADE;
+    uint8_t red1 = packetbuffer[2];
+    uint8_t green1 = packetbuffer[3];
+    uint8_t blue1 = packetbuffer[4];
+    uint8_t red2 = packetbuffer[5];
+    uint8_t green2 = packetbuffer[6];
+    uint8_t blue2 = packetbuffer[7];
+    Stick.Fade(Stick.Color(red1, green1, blue1), Stick.Color(red2, green2, blue2), 50, 100);
+    Serial.print("Fade\n");
+    Serial.print("\tRGB1: #");
+    Serial.print(red1, HEX);
+    Serial.print(green1, HEX);
+    Serial.print(blue1, HEX);
+    Serial.print("\n\tRGB2: #");
+    Serial.print(red2, HEX);
+    Serial.print(green2, HEX);
+    Serial.print(blue2, HEX);    
   }
 
   // Scanner
